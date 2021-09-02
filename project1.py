@@ -1,55 +1,101 @@
-account_name = input('Please enter the name of your account: ').title()
-balance = float(input('\nPlease enter the starting balance: '))
+account_name = input('Enter an account name: ').title().strip()
+balance = 0
 
+while not balance:
+    try:
+        balance = float(input('\nEnter your starting balance: '))
+    except ValueError:
+        print('Invalid starting balance. Try again.')
 
+total_withdraw = 0
+failed_withdraw = 0
+total_deposit = 0
+total_penalty = 0
+count_withdraw = 0
+count_penalty = 0
+count_deposit = 0
 
-def withdraw(n):
-    global balance
-    balance -= n
-
-
-def deposit(n):
-    global balance
-    balance += n
-
-def penalty():
-    global balance
-    balance -= 5
-    print(f'\n-- Insufficient funds. For your convenience, an overdraft fee of $5 is being deducted from your balance. Have a nice day. --\n')
 
 def stop():
-    print('Thanks for using Rivera and Viera\'s Bank Account Simulator. Come again!')
+    print(f'\nFinal balance: ${balance:,.2f}')
+    print(f'You made {count_deposit} deposits, totaling: ${total_deposit:,.2f}')
+    print(f'You made {count_withdraw} withdraws, totaling: ${total_withdraw:,.2f}')
+    print(f'You made {count_penalty} unsuccessful withdraws. Unsuccessfully withdrawn :${failed_withdraw:,.2f}')
+    print(f'You encountered {count_penalty} penalties, resulting in: ${0-total_penalty:,.2f}')
+    print(f'\nThanks for using Rivera and Viera\'s Bank Account Simulator. Come again!')
 
 
+# We print these quite a lot so I made a function for it.
 def info():
-    print(f"\nAccount: {account_name}")
-    print(f"Balance: ${balance:,.2f}")
+    x = ''
+    if len(f'{balance:,.2f}')+10 > len(f'{account_name}')+6:
+        x = len(f'{balance:,.2f}')+10
+    else: x = len(f'{account_name}')+6
+    print(f'\n{"-"*x}\n'
+          f'Name: {account_name}\n'
+          f'Balance: ${balance:,.2f}\n'
+          f'{"-"*x}')
+
+
+def choice_w():
+    global total_withdraw, failed_withdraw, total_penalty, balance, count_withdraw, count_penalty
+    try:
+        w_amount = float(input('How much would you like to withdraw? '))
+        if w_amount >= 0:  # Makes sure we cannot input negatives. Just a quality of life thing.
+            if balance >= w_amount:
+                balance -= w_amount
+                total_withdraw += w_amount
+                count_withdraw += 1
+            else:
+                print('Unsuccessful withdrawal. Insufficient funds. $5 have been deducted from your account.')
+                balance -= 5
+                total_penalty += 5
+                failed_withdraw += w_amount
+                count_penalty += 1
+        else:
+            print('Please enter a valid input.')
+            choice_w()
+    except ValueError:
+        print('Please enter a valid input.')
+        choice_w()
+
+
+def choice_d():
+    global total_deposit, balance, count_deposit
+    try:
+        d_amount = float(input('How much would you like to deposit? '))
+        if d_amount >= 0:  # Similar to the withdraw(), no negatives.
+            balance += d_amount
+            total_deposit += d_amount
+            count_deposit += 1
+        else:
+            print('Please enter a valid input.')
+            choice_d()
+    except ValueError:
+        print('Please enter a valid input.')
+        choice_d()
 
 
 def choice():
-    user_choice = input(f'You may:\n'
-                        f'1) Deposit some funds\n'
-                        f'2) Withdraw some funds\n'
-                        f'3) Quit\n'
-                        f'Please enter your selection: ').lower().strip()
+    user_choice = input(f'\nWhat would you like to do?\n\n'
+                        f'1)Withdraw\n'
+                        f'2)Deposit\n'
+                        f'3)Quit\n\n'
+                        f'Please enter your selection: ').strip()
     if user_choice == '1':
-        d_amount = float(input('How much would you like to deposit? '))
-        deposit(d_amount)
-
+        choice_w()
+        info()
+        choice()
     elif user_choice == '2':
-        w_amount = float(input('How much would you like to withdraw? '))
-        if(w_amount > balance):
-            penalty()
-        else:
-            withdraw(w_amount)
-
+        choice_d()
+        info()
+        choice()
     elif user_choice == '3':
         stop()
     else:
-        print(f'---- {user_choice} is not a valid input. Please enter a valid input ----')
+        print('Please enter a valid input')
         choice()
-    info()
-    choice()
+
 
 info()
 choice()
