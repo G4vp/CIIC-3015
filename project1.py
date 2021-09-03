@@ -1,12 +1,6 @@
 account_name = input('Enter an account name: ').title().strip()
 balance = 0
 
-while not balance:
-    try:
-        balance = float(input('\nEnter your starting balance: '))
-    except ValueError:
-        print('Invalid starting balance. Try again.')
-
 total_withdraw = 0
 failed_withdraw = 0
 total_deposit = 0
@@ -15,26 +9,36 @@ count_withdraw = 0
 count_penalty = 0
 count_deposit = 0
 
+# Loop until you give it a valid starting balance.
+while not balance:
+    try:
+        balance = float(input('\nEnter your starting balance: '))
+    except ValueError:
+        print('Invalid starting balance. Try again.')
 
+
+# Print the info if you Quit.
 def stop():
     print(f'\nFinal balance: ${balance:,.2f}')
     print(f'You made {count_deposit} deposits, totaling: ${total_deposit:,.2f}')
     print(f'You made {count_withdraw} withdraws, totaling: ${total_withdraw:,.2f}')
-    print(f'You made {count_penalty} unsuccessful withdraws. Unsuccessfully withdrawn :${failed_withdraw:,.2f}')
+    print(f'You made {count_penalty} unsuccessful withdraws. Unsuccessfully withdrawn3: ${failed_withdraw:,.2f}')
     print(f'You encountered {count_penalty} penalties, resulting in: ${0-total_penalty:,.2f}')
     print(f'\nThanks for using Rivera and Viera\'s Bank Account Simulator. Come again!')
 
 
 # We print these quite a lot so I made a function for it.
 def info():
-    x = ''
-    if len(f'{balance:,.2f}')+10 > len(f'{account_name}')+6:
-        x = len(f'{balance:,.2f}')+10
-    else: x = len(f'{account_name}')+6
+    x = ''  
+    if len(f'{balance:,.2f}')+10 > len(f'{account_name}')+6: 
+        x = len(f'{balance:,.2f}')+10 
+    else: 
+        x = len(f'{account_name}')+6
+
     print(f'\n{"-"*x}\n'
-          f'Name: {account_name}\n'
-          f'Balance: ${balance:,.2f}\n'
-          f'{"-"*x}')
+            f'Name: {account_name}\n'
+            f'Balance: ${balance:,.2f}\n'
+            f'{"-"*x}')
 
 
 def choice_w():
@@ -84,18 +88,14 @@ def choice():
                         f'Please enter your selection: ').strip()
     if user_choice == '1':
         choice_w()
-        info()
-        choice()
     elif user_choice == '2':
         choice_d()
-        info()
-        choice()
     elif user_choice == '3':
-        stop()
+        return stop()
     else:
         print('Please enter a valid input')
-        choice()
-
+    info()
+    choice()
 
 info()
 choice()
