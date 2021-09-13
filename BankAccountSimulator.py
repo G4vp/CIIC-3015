@@ -2,8 +2,13 @@
 # CIIC 3015 Lab Project 1
 # We have colors, so please do not use in the Windows terminal, as it will not change the colors.
 
+
+
+
+
 # Allows us to save the date and time of transactions for reports.
 from datetime import datetime
+import time
 
 # Different colored text to grab the user's attention.
 class colors:
@@ -35,19 +40,25 @@ transfer_receive = {}
 transfer_send = {}
 send_total = {}
 receive_total = {}
+riviera = '''██████╗░██╗██╗░░░██╗██╗███████╗██████╗░░█████╗░
+██╔══██╗██║██║░░░██║██║██╔════╝██╔══██╗██╔══██╗
+██████╔╝██║╚██╗░██╔╝██║█████╗░░██████╔╝███████║
+██╔══██╗██║░╚████╔╝░██║██╔══╝░░██╔══██╗██╔══██║
+██║░░██║██║░░╚██╔╝░░██║███████╗██║░░██║██║░░██║
+╚═╝░░╚═╝╚═╝░░░╚═╝░░░╚═╝╚══════╝╚═╝░░╚═╝╚═╝░░╚═╝'''
 
 
 def sign():
     global account_names, account_balances, current_account
 
-    sign_log = input(f'{colors.green}\nWelcome to Rivera and Viera\'s Bank Account Simulator!{colors.black}'
+    sign_log = input(f'{colors.green}\n{riviera}\n\nWelcome to Rivera and Viera\'s Bank Account Simulator!{colors.black}'
                         f'\n\nWhat would you like to do? \n\n'
                         f'1) Create an account\n'
                         f'2) Log into an account\n\n'
                         f'Please enter your selection: ').strip().lower()
     if sign_log in ('1', 'create', 'c', 'create an account'):
         while True:
-            current_account = input(f'\nEnter an account name: ').strip().title()
+            current_account = input(f'\nEnter an account name: ').strip()
             if current_account == '':
                 print(f'{colors.yellow}\nPlease enter a valid input.{colors.black}')
             elif current_account in account_names:
@@ -294,7 +305,7 @@ def choice_r_transfer():
 
 
 def send_money():
-    global account_balances, account_names, current_account
+    global account_balances, account_names, current_account, send_total, receive_total
 
     try:
         user_name = input(f'\nIf you would like to cancel this money transfer, do not enter a name.'
@@ -314,9 +325,16 @@ def send_money():
         elif money_for_send < 0:
             return print(f"\n{colors.yellow}Hey! Are you trying to steal money from another account?!{colors.black}")
         elif money_for_send > account_balances[current_account]:
-            return print(f"\n{colors.yellow}Sorry, you can't send money you don't have.{colors.black}")
+            return print(f"\n{colors.yellow}Sorry, you can't send money that you don't have.{colors.black}")
         account_balances.update({user_name: account_balances.get(user_name) + money_for_send})
         account_balances.update({current_account: account_balances.get(current_account) - money_for_send})
+        if(not current_account in send_total.keys()):
+            send_total.update({current_account:{'total': 0, 'count':0}})
+        send_total[current_account].update({'total': send_total[current_account].get('total',0)+money_for_send,'count': send_total[current_account].get('count',0)+1})
+
+        if(not user_name in receive_total.keys()):
+            receive_total.update({user_name:{'total': 0, 'count':0}})
+        receive_total[user_name].update({'total': receive_total[user_name].get('total',0)+money_for_send,'count': receive_total[user_name].get('count',0)+1})
         temp = general_record.setdefault(user_name, [])
         temp.append(([f'{colors.green}${money_for_send:,.2f}',
                         f'{datetime.now().isoformat(sep=" ", timespec="minutes")}',
@@ -354,6 +372,7 @@ def send_money():
 
 # Occurs when the user wants to exit. Will print final balance, general information of transactions, etc.
 def stop():
+    print(f'\n{riviera}\n')
     print(f'\nFinal balance: ${account_balances[current_account]:,.2f}')
     print(f'You made {count_deposit.get(current_account, 0)} deposits, '
             f'totaling: ${total_deposit.get(current_account, 0):,.2f}')
@@ -362,15 +381,18 @@ def stop():
     print(f'You made {count_penalty.get(current_account, 0)} unsuccessful withdraws. '
             f'Unsuccessfully withdrawn :${failed_withdraw.get(current_account, 0):,.2f}')
 
-    if count_penalty.get(current_account, 0) == 0:
-        print(f'You encountered {count_penalty.get(current_account, 0)} penalties, '
-                f'resulting in: ${total_penalty.get(current_account, 0):,.2f}')
+    print(f'You sent money {send_total[current_account].get("count",0)} times with a total value of ${send_total[current_account].get("total",0):,.2f}') if current_account in send_total.keys() else print(f'you sent money 0 times with a total value of $0.00')
 
-    else:
-        print(f'You encountered {count_penalty.get(current_account, 0)} penalties, '
+    print(f'You receive money {receive_total[current_account].get("count",0)} times with a total value of ${receive_total[current_account].get("total",0):,.2f}') if current_account in receive_total.keys() else print(f'you sent money 0 times with a total value of $0.00')
+
+    
+
+    print(f'You encountered {count_penalty.get(current_account, 0)} penalties, '
+                f'resulting in: ${total_penalty.get(current_account, 0):,.2f}')if count_penalty.get(current_account, 0) == 0 else print(f'You encountered {count_penalty.get(current_account, 0)} penalties, '
                 f'resulting in: -${total_penalty.get(current_account, 0):,.2f}')
 
-    print(f'{colors.green}\nThanks for using Rivera and Viera\'s Bank Account Simulator. Come again!{colors.black}')
+    input(f'{colors.green}\nThanks for using Rivera and Viera\'s Bank Account Simulator. Come again!{colors.black}\n')
+    
 
 # Function that allows the user to pick between withdraws, deposits, records, send money or exiting.
 def choice():
