@@ -1,14 +1,14 @@
 # Gabriel A. Viera Perez and Jose Raul Rivera Rodriguez
 # CIIC 3015 Lab Project 1
-# We have colors, so please do not use in the Windows terminal, as it will not change the colors.
 
 
-
+# We added some extra features like the account system, record system, and a sent and receive money system.
+# Also we have colors, so please do not use in the Windows terminal, as it will not change the colors.
 
 
 # Allows us to save the date and time of transactions for reports.
 from datetime import datetime
-import time
+
 
 # Different colored text to grab the user's attention.
 class colors:
@@ -19,6 +19,7 @@ class colors:
     blue = '\033[94m'  # Withdraw Reports
     cyan = '\033[96m'  # Deposit Reports
     magenta = '\033[95m'  # Transactions
+
 
 # All necessary variables that stores values
 account_names = {}
@@ -48,14 +49,17 @@ riviera = '''██████╗░██╗██╗░░░██╗██�
 ╚═╝░░╚═╝╚═╝░░░╚═╝░░░╚═╝╚══════╝╚═╝░░╚═╝╚═╝░░╚═╝'''
 
 
+# Sign up function used to ask for a log in or a create account.
+
 def sign():
     global account_names, account_balances, current_account
 
-    sign_log = input(f'{colors.green}\n{riviera}\n\nWelcome to Rivera and Viera\'s Bank Account Simulator!{colors.black}'
-                        f'\n\nWhat would you like to do? \n\n'
-                        f'1) Create an account\n'
-                        f'2) Log into an account\n\n'
-                        f'Please enter your selection: ').strip().lower()
+    sign_log = input(
+        f'{colors.green}\n{riviera}\n\nWelcome to Rivera and Viera\'s Bank Account Simulator!{colors.black}'
+        f'\n\nWhat would you like to do? \n\n'
+        f'1) Create an account\n'
+        f'2) Log into an account\n\n'
+        f'Please enter your selection: ').strip().lower()
     if sign_log in ('1', 'create', 'c', 'create an account'):
         while True:
             current_account = input(f'\nEnter an account name: ').strip()
@@ -89,6 +93,8 @@ def sign():
         print(f'{colors.yellow}\nPlease enter a valid input.{colors.black}')
         sign()
 
+
+# Ask the user for their balance, if the input is not a valid will loop until you give him a correct input.
 def ask_balance():
     while True:
         try:
@@ -96,6 +102,7 @@ def ask_balance():
             break
         except ValueError:
             print(f'\n{colors.yellow}Please enter a valid input.{colors.black}')
+
 
 # Used to print the user's name and current balance after each transaction.
 # It also prints dashes (-) on the top and bottom to separate it from other information.
@@ -116,6 +123,7 @@ def info():
             f'{print_name}'
             f'{print_balance}'
           f'{"-" * x}')
+
 
 # Runs when the user wants to withdraw.
 # If the user attempts to enter a string or negative number it will ask for a second input.
@@ -162,6 +170,7 @@ def choice_w():
     except ValueError:
         print(f'{colors.yellow}\nPlease enter a valid input.{colors.black}')
         choice_w()
+
 
 # Very similar to the choice_w() function
 # Runs when the user wants to deposit.
@@ -258,6 +267,7 @@ def choice_r():
     choice_r()
 
 
+# Choice between sent or receive transfers, or both to see the record of they.
 def choice_r_transfer():
     choice_t = input(f'\nWhich transfer record would you like to see? \n\n'
                         f'1) All Transfers\n'
@@ -304,6 +314,7 @@ def choice_r_transfer():
         choice_r_transfer()
 
 
+# The money transfer system
 def send_money():
     global account_balances, account_names, current_account, send_total, receive_total
 
@@ -328,13 +339,15 @@ def send_money():
             return print(f"\n{colors.yellow}Sorry, you can't send money that you don't have.{colors.black}")
         account_balances.update({user_name: account_balances.get(user_name) + money_for_send})
         account_balances.update({current_account: account_balances.get(current_account) - money_for_send})
-        if(not current_account in send_total.keys()):
-            send_total.update({current_account:{'total': 0, 'count':0}})
-        send_total[current_account].update({'total': send_total[current_account].get('total',0)+money_for_send,'count': send_total[current_account].get('count',0)+1})
+        if current_account not in send_total.keys():
+            send_total.update({current_account: {'total': 0, 'count': 0}})
+        send_total[current_account].update({'total': send_total[current_account].get('total', 0) + money_for_send,
+                                            'count': send_total[current_account].get('count', 0) + 1})
 
-        if(not user_name in receive_total.keys()):
-            receive_total.update({user_name:{'total': 0, 'count':0}})
-        receive_total[user_name].update({'total': receive_total[user_name].get('total',0)+money_for_send,'count': receive_total[user_name].get('count',0)+1})
+        if user_name not in receive_total.keys():
+            receive_total.update({user_name: {'total': 0, 'count': 0}})
+        receive_total[user_name].update({'total': receive_total[user_name].get('total', 0) + money_for_send,
+                                            'count': receive_total[user_name].get('count', 0) + 1})
         temp = general_record.setdefault(user_name, [])
         temp.append(([f'{colors.green}${money_for_send:,.2f}',
                         f'{datetime.now().isoformat(sep=" ", timespec="minutes")}',
@@ -370,29 +383,37 @@ def send_money():
     except ValueError:
         print(f'{colors.yellow}\nPlease enter a valid input.{colors.black}')
 
+
 # Occurs when the user wants to exit. Will print final balance, general information of transactions, etc.
 def stop():
-    print(f'\n{riviera}\n')
+    print(f'{colors.green}\n{riviera}\n\n'
+            f'{current_account}   |   {datetime.now().isoformat(sep=" ", timespec="minutes")}{colors.black}')
     print(f'\nFinal balance: ${account_balances[current_account]:,.2f}')
     print(f'You made {count_deposit.get(current_account, 0)} deposits, '
             f'totaling: ${total_deposit.get(current_account, 0):,.2f}')
     print(f'You made {count_withdraw.get(current_account, 0)} withdraws, '
             f'totaling: ${total_withdraw.get(current_account, 0):,.2f}')
     print(f'You made {count_penalty.get(current_account, 0)} unsuccessful withdraws. '
-            f'Unsuccessfully withdrawn :${failed_withdraw.get(current_account, 0):,.2f}')
+            f'Unsuccessfully withdrawn: ${failed_withdraw.get(current_account, 0):,.2f}')
 
-    print(f'You sent money {send_total[current_account].get("count",0)} times with a total value of ${send_total[current_account].get("total",0):,.2f}') if current_account in send_total.keys() else print(f'you sent money 0 times with a total value of $0.00')
+    print(
+        f'You sent money {send_total[current_account].get("count", 0)} times, finishing with a total value of '
+        f'${send_total[current_account].get("total", 0):,.2f}') if current_account in send_total.keys() else print(
+        f'You sent money 0 times.')
 
-    print(f'You receive money {receive_total[current_account].get("count",0)} times with a total value of ${receive_total[current_account].get("total",0):,.2f}') if current_account in receive_total.keys() else print(f'you sent money 0 times with a total value of $0.00')
-
-    
+    print(
+        f'You received money {receive_total[current_account].get("count", 0)} times, finishing with a total of '
+        f'${receive_total[current_account].get("total", 0):,.2f}') if current_account in receive_total.keys() else \
+        print(f'You received money 0 times.')
 
     print(f'You encountered {count_penalty.get(current_account, 0)} penalties, '
-                f'resulting in: ${total_penalty.get(current_account, 0):,.2f}')if count_penalty.get(current_account, 0) == 0 else print(f'You encountered {count_penalty.get(current_account, 0)} penalties, '
-                f'resulting in: -${total_penalty.get(current_account, 0):,.2f}')
+            f'resulting in: ${total_penalty.get(current_account, 0):,.2f}') if count_penalty.get(current_account,
+                                                                                                0) == 0 else print(
+        f'You encountered {count_penalty.get(current_account, 0)} penalties, '
+        f'resulting in: -${total_penalty.get(current_account, 0):,.2f}')
 
     input(f'{colors.green}\nThanks for using Rivera and Viera\'s Bank Account Simulator. Come again!{colors.black}\n')
-    
+
 
 # Function that allows the user to pick between withdraws, deposits, records, send money or exiting.
 def choice():
@@ -437,6 +458,5 @@ def choice():
 sign()
 info()
 choice()
-
 
 # <3
