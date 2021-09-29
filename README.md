@@ -1,20 +1,11 @@
-Code made by:  Gabriel A. Viera Perez and Jose Raul Rivera Rodriguez
+Code made by: Gabriel A. Viera Perez and Jose Raul Rivera Rodriguez
 
-Bank Simulator, made in Python.
-This is the proyect 1 for CIIC 3015 lab (Introduction to Computer Programming) at University of Puerto Rico - Mayaguez
+Bank Simulator, created in Python. 
+Project 1 for CIIC 3015 lab (Introduction to Computer Programming) at the University of Puerto Rico - Mayaguez
 
-
-Some features of our proyect:
-
+Some features of our project:
 -Different colored text to grab the user's attention.
-
--An account system.
-
+-An accounting system.
 -Record System.
-
 -Withdraw and deposit system.
-
 -Sent and receive money system.
-
-
-
