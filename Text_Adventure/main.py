@@ -39,164 +39,87 @@ def Project2():
     pantry_is_closed = True
     key_acquired = False
     safe_is_closed = True
-
+    stella_is_happy = False
+    stella_have_bone = False
+    bone_in_pocket = False
+    spam_in_pocket = False
+    key_in_pocket = False
+    
+    scenes = {"Front Door":'1',"Living Room":'1', "Kitchen":"1", "Office":'1',"Bedroom":'1'}
     room = 0
     turn = 0
     
-
     print("\nWhat an awful day! You are completely exhausted, all you want to do is climb into bed and collapse. "
             "Unfortunately, that is easier said than done…\n")
     print("CIIC 3015 Autumn 2021 Project 2: Time For Go-To-Bed\n")
     print("Good luck, Have fun! ;)\n")
 
     while flag_me_awake:
+        print('-'*20)
+        if room == ROOM_LIVING:
+            if(stella_is_happy and not(flag_tv_on)):
+                    scenes.update({ROOM_NAMES[room]:'4'})
+            elif(flag_tv_on and stella_have_bone):
+                    scenes.update({ROOM_NAMES[room]:'3'})
+            elif(not(flag_tv_on) and stella_have_bone):
+                    scenes.update({ROOM_NAMES[room]:'2'})
+            elif(flag_tv_on and not(stella_is_happy)):
+                    scenes.update({ROOM_NAMES[room]:'1.1'})
+            else:scenes.update({ROOM_NAMES[room]:'1'})
+            if flag_tv_on : print('The TV is ON')
+            else: print('The TV is OFF')
+            if not(stella_is_happy):
+                if stella_have_bone and flag_tv_on:
+                    stella_is_happy = True
+                    print('Stella is happily chewing on ther nice tasty bone and completely ignores you as you walk into the bedroom')
+                elif stella_have_bone and not flag_tv_on :
+                    print('\nStella seems tense. She glancing from the bone in your hand, to the silent tv, to you, and back to silent tv again. Every now and then she makes a sad little noise.')
+                else:
+                    print('Stella is here, looking hungry and disappointed')
 
         print("Location: ", ROOM_NAMES[room])
-        print(visuals(ROOM_NAMES[room],'1'))
-        cmd = input("> ").lower()
+        print(visuals(ROOM_NAMES[room],scenes.get(ROOM_NAMES[room])))
+        cmd = input("\n> ").lower()
         turn += 1
 
         if cmd in CMD_QUIT:
             return False
 
-        if room == ROOM_LIVING:
-            if cmd in CMD_WEST:
-                print("print for leaving the house: living")
-                continue
-
-            if cmd in CMD_EAST:
-                print("print for entering the office: living")
-                room = ROOM_OFFICE
-                continue
-
-            if cmd in CMD_NORTH:
-                print("print for entering the bedroom: living")
-                room = ROOM_BED
-                continue
-
-            if cmd in CMD_SOUTH:
-                print("print for entering the kitchen: living")
-                room = ROOM_KITCHEN
-                continue
-
-            if cmd in CMD_TV:
-                if flag_tv_on:
-                    print("print for tv is now off: living")
-                else:
-                    print("print for tv is now on: living")
-                flag_tv_on = not flag_tv_on
-                continue
-
-            if cmd in CMD_BED:
-                print()
-                continue
-
-            if cmd in CMD_CLOSE:
-                print("print for close: living")
-                continue
-
-            if cmd in CMD_FEED:
-                print()
-                continue
-
-            if cmd in CMD_GET:
-                print()
-                continue
-
-            if cmd in CMD_LOCK:
-                print("print for lock: living")
-                continue
-
-            if cmd in CMD_OPEN:
-                print("print for open: living")
-                continue
-
-            if cmd in CMD_PUT:
-                print()
-                continue
-
-            if cmd in CMD_UNLOCK:
-                print()
-                continue
-
         if room == ROOM_FRONT:
-            if cmd in CMD_WEST:
-                print("print for west: front")
-                continue
-
             if cmd in CMD_EAST:
-                print("print for entering the house(living room): front")
+                print("Home, sweet home! You enter your house.")
                 room = ROOM_LIVING
                 continue
 
+        if room == ROOM_LIVING:
             if cmd in CMD_NORTH:
-                print("print for north: front")
+                room = ROOM_BED
                 continue
-
+            if cmd in CMD_WEST:
+                continue
+            if cmd in CMD_EAST:
+                room = ROOM_OFFICE
+                continue
             if cmd in CMD_SOUTH:
-                print("print for south: front")
+                room = ROOM_KITCHEN
                 continue
-
             if cmd in CMD_TV:
-                print("print for tv: front")
+                flag_tv_on = not flag_tv_on
                 continue
-
-            if cmd in CMD_BED:
-                print()
-                continue
-
-            if cmd in CMD_CLOSE:
-                print("print for close: front")
-                continue
-
             if cmd in CMD_FEED:
-                print()
+                if(bone_in_pocket):
+                    stella_have_bone = True
+                    bone_in_pocket = False
+                    print('Stella hungrily snatches the nice tasty bone out of your hand and starts to chew on it. She no longer seems to notice or care that you are here.')
+                else:
+                    print("\nYou can't feed Stella rigth now. I think in the kitchen there are a good looking bone.")
                 continue
 
-            if cmd in CMD_GET:
-                print()
-                continue
-
-            if cmd in CMD_LOCK:
-                print("print for lock: front")
-                continue
-
-            if cmd in CMD_OPEN:
-                print("print for open: front")
-                continue
-
-            if cmd in CMD_PUT:
-                print()
-                continue
-
-            if cmd in CMD_UNLOCK:
-                print()
-                continue
 
         if room == ROOM_OFFICE:
             if cmd in CMD_WEST:
                 print("print for entering living room: office")
                 room = ROOM_LIVING
-                continue
-
-            if cmd in CMD_EAST:
-                print("print for east: office")
-                continue
-
-            if cmd in CMD_NORTH:
-                print("print for north: office")
-                continue
-
-            if cmd in CMD_SOUTH:
-                print("print for south: office")
-                continue
-
-            if cmd in CMD_TV:
-                print("print for tv: office")
-                continue
-
-            if cmd in CMD_BED:
-                print()
                 continue
 
             if cmd in CMD_CLOSE:
@@ -205,10 +128,6 @@ def Project2():
                     continue
                 safe_is_closed = True
                 print("safe is now closed")
-                continue
-
-            if cmd in CMD_FEED:
-                print()
                 continue
 
             if cmd in CMD_GET:
@@ -241,29 +160,10 @@ def Project2():
                 continue
 
         if room == ROOM_KITCHEN:
-            if cmd in CMD_WEST:
-                print("print for west: kitchen")
-                continue
-
-            if cmd in CMD_EAST:
-                print("print for east: kitchen")
-                continue
 
             if cmd in CMD_NORTH:
                 print("print for entering the living room: kitchen")
                 room = ROOM_LIVING
-                continue
-
-            if cmd in CMD_SOUTH:
-                print("print for south: kitchen")
-                continue
-
-            if cmd in CMD_TV:
-                print("print for tv: kitchen")
-                continue
-
-            if cmd in CMD_BED:
-                print()
                 continue
 
             if cmd in CMD_CLOSE:
@@ -272,10 +172,6 @@ def Project2():
                     continue
                 pantry_is_closed = True
                 print("pantry is now closed")
-                continue
-
-            if cmd in CMD_FEED:
-                print()
                 continue
 
             if cmd in CMD_GET:
@@ -313,36 +209,13 @@ def Project2():
                 continue
 
         if room == ROOM_BED:
-            if cmd in CMD_WEST:
-                print("print for west: bed")
-                continue
-
-            if cmd in CMD_EAST:
-                print("print for east: bed")
-                continue
-
-            if cmd in CMD_NORTH:
-                print("print for north: bed")
-                continue
 
             if cmd in CMD_SOUTH:
                 print("print for entering the living room: bed")
                 room = ROOM_LIVING
                 continue
 
-            if cmd in CMD_TV:
-                print("print for tv: bed")
-                continue
-
             if cmd in CMD_BED:
-                print()
-                continue
-
-            if cmd in CMD_CLOSE:
-                print("print for close: bed")
-                continue
-
-            if cmd in CMD_FEED:
                 print()
                 continue
 
@@ -350,21 +223,10 @@ def Project2():
                 print()
                 continue
 
-            if cmd in CMD_LOCK:
-                print("print for lock: bed")
-                continue
-
-            if cmd in CMD_OPEN:
-                print("print for open: bed")
-                continue
-
             if cmd in CMD_PUT:
                 print()
                 continue
 
-            if cmd in CMD_UNLOCK:
-                print()
-                continue
         print("Illegal command.")
 
     print(turn, "turns played.")
@@ -376,16 +238,16 @@ def visuals(room,scene):
     house = {
         'Front Door':{
             '1':(
-                f'----------------------\n'
-                f'|                    |\n'
-                f'|                    |\n'
-                f'-\__o___             -\n'
-                f'                      \n'
-                f'                      \n'
-                f'-                    -\n'
-                f'|                    |\n'
-                f'|                    |\n'
-                f'----------------------\n'),
+                f'                   -\n'
+                f'  =_               |\n'
+                f'   l               |\n'
+                f'            ___o__/-\n'
+                f'                    \n'
+                f'                    \n'
+                f'                   -\n'
+                f'                   |\n'
+                f'                   |\n'
+                f'                   -\n'),
             '2':(
                 f'----------------------\n'
                 f'|                    |\n'
@@ -401,13 +263,24 @@ def visuals(room,scene):
         'Living Room':{
             '1':(
                 f'------|         |------\n'
-                f'|      o/~\___       |\n'
-                f'|         ||  |\       |\n'
+                f'|      o/~\___        |\n'
+                f'|         ||  |\      |\n'
                 f'-                     -\n'
                 f'                       \n'
                 f'                       \n'
                 f'-               \ /   -\n'
                 f'|              |OFF|  |\n'
+                f'|                ^    |\n'
+                f'------|         |------\n'),
+            '1.1':(
+                f'------|         |------\n'
+                f'|      o/~\___        |\n'
+                f'|         ||  |\      |\n'
+                f'-                     -\n'
+                f'                       \n'
+                f'                       \n'
+                f'-               \ /   -\n'
+                f'|              |O N|  |\n'
                 f'|                ^    |\n'
                 f'------|         |------\n'),
             '2':(
